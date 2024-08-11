@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameInput : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class GameInput : MonoBehaviour
     {
         playerInputAction = new PlayerInputAction();
         playerInputAction.Player.Enable();
+        playerInputAction.Player.Interact.performed += InteractOnperformed;
+    }
+
+    private void InteractOnperformed(InputAction.CallbackContext obj)
+    {
+        Debug.Log(obj);
     }
 
     public Vector2 GetMovementVectorNormalized()

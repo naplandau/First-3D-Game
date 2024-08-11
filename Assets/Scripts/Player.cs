@@ -7,10 +7,44 @@ public class Player : MonoBehaviour
     [SerializeField] private float moveSpeed = 8f;
     [SerializeField] private float forwardRotateSpeed = 30f;
     [SerializeField] private GameInput gameInput;
+    [SerializeField] private LayerMask counterLayerMask;
     
-    private bool isMoving;
+    private bool _isMoving;
+    private Vector3 _lastInteractDir;
 
     private void Update()
+    {
+        HandleMovement();
+        HandleInteraction();
+        
+    }
+
+    public bool IsMoving()
+    {
+        return _isMoving;
+    }
+
+    void HandleInteraction()
+    {
+        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+
+        if (moveDir != Vector3.zero)
+        {
+            _lastInteractDir = moveDir;
+        }
+
+        float interactDistance = 2f;
+        if (Physics.Raycast(transform.position, _lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask))
+        {
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            {
+                clearCounter.Interact();
+            }
+        }
+    }
+        
+    void HandleMovement()
     {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
@@ -51,13 +85,8 @@ public class Player : MonoBehaviour
             transform.position += moveDir * (moveSpeed * Time.deltaTime);
         }
 
-        isMoving = moveDir != Vector3.zero;
+        _isMoving = moveDir != Vector3.zero;
 
         transform.forward = Vector3.Slerp(transform.forward, moveDir, forwardRotateSpeed * Time.deltaTime);
-    }
-
-    public bool IsMoving()
-    {
-        return isMoving;
     }
 }
