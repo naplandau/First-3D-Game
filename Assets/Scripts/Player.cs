@@ -1,16 +1,52 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+
+public class Player : MonoBehaviour, IKitchenObjectParent
 {
+    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    public class OnSelectedCounterChangedEventArgs : EventArgs {
+        public ClearCounter selectedCounter; 
+    }
+    
     [SerializeField] private float moveSpeed = 8f;
     [SerializeField] private float forwardRotateSpeed = 30f;
     [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask counterLayerMask;
-    
+    [SerializeField] private Transform kitchenObjectHoldOnPoint;
+
+    private KitchenObject _kitchenObject;
     private bool _isMoving;
     private Vector3 _lastInteractDir;
+    private ClearCounter _selectedCounter;
+
+    public static Player Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null) {
+        
+            Debug.LogError("There is more than 1 player");
+        }
+
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        
+        gameInput.OnInteractAction += GameInputOnOnInteractAction;
+    }
+
+    private void GameInputOnOnInteractAction(object sender, EventArgs e)
+    {
+        if (_selectedCounter != null)
+        {
+            _selectedCounter.Interact(this);
+        }
+    }
 
     private void Update()
     {
@@ -39,9 +75,26 @@ public class Player : MonoBehaviour
         {
             if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
             {
-                clearCounter.Interact();
+                if (clearCounter != _selectedCounter)
+                {
+                    SetSelectedCounter(clearCounter);
+                }
+            }
+            else
+            {
+                SetSelectedCounter(null);
             }
         }
+        else
+        {
+            SetSelectedCounter(null);
+        }
+    }
+
+    private void SetSelectedCounter(ClearCounter clearCounter)
+    {
+        _selectedCounter = clearCounter;
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs{selectedCounter = _selectedCounter});
     }
         
     void HandleMovement()
@@ -72,10 +125,6 @@ public class Player : MonoBehaviour
                 {
                     moveDir = moveDirZ;
                 }
-                else
-                {
-                    
-                }
             }
 
         }
@@ -88,5 +137,31 @@ public class Player : MonoBehaviour
         _isMoving = moveDir != Vector3.zero;
 
         transform.forward = Vector3.Slerp(transform.forward, moveDir, forwardRotateSpeed * Time.deltaTime);
+    }
+
+    public Transform GetKitchenObjectFollowTransform()
+    {
+        return kitchenObjectHoldOnPoint;
+    }
+
+    public void SetKitchenObject(KitchenObject kitchenObject)
+    {
+
+        this._kitchenObject = kitchenObject;
+    }
+
+    public KitchenObject GetKitchenObject()
+    {
+        return _kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        this._kitchenObject = null;
+    }
+
+    public bool HasKitchenObject()
+    {
+        return _kitchenObject != null;
     }
 }
