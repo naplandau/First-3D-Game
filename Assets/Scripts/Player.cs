@@ -8,7 +8,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 {
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
-        public ClearCounter selectedCounter; 
+        public BaseCounter selectedCounter; 
     }
     
     [SerializeField] private float moveSpeed = 8f;
@@ -20,7 +20,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private KitchenObject _kitchenObject;
     private bool _isMoving;
     private Vector3 _lastInteractDir;
-    private ClearCounter _selectedCounter;
+    private BaseCounter _selectedCounter;
 
     public static Player Instance { get; private set; }
 
@@ -38,6 +38,14 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     {
         
         gameInput.OnInteractAction += GameInputOnOnInteractAction;
+        gameInput.OnInteractAlternativeAction += GameInputOnOnInteractAlternativeAction;
+    }
+
+    private void GameInputOnOnInteractAlternativeAction(object sender, EventArgs e) {
+        if (_selectedCounter != null)
+        {
+            _selectedCounter.InteractAlternative(this);
+        }
     }
 
     private void GameInputOnOnInteractAction(object sender, EventArgs e)
@@ -73,7 +81,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, _lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask))
         {
-            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            if (raycastHit.transform.TryGetComponent(out BaseCounter clearCounter))
             {
                 if (clearCounter != _selectedCounter)
                 {
@@ -91,7 +99,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         }
     }
 
-    private void SetSelectedCounter(ClearCounter clearCounter)
+    private void SetSelectedCounter(BaseCounter clearCounter)
     {
         _selectedCounter = clearCounter;
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs{selectedCounter = _selectedCounter});
@@ -105,12 +113,12 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         float moveDistance = moveSpeed * Time.deltaTime;
         float playerHeight = 2f;
         float playerRadius = .7f;
-        bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight,
+        bool canMove = moveDir.x != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight,
             playerRadius, moveDir, moveDistance);
         if (!canMove)
         {
             Vector3 moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight,
+            canMove = moveDir.z != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight,
                 playerRadius, moveDirX, moveDistance);
             if (canMove)
             {
