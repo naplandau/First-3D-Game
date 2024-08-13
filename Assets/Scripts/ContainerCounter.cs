@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ContainerCounter : BaseCounter
 {
-    public event EventHandler OnPlayerGrabedObject;
+    public event EventHandler OnPlayerGrabbedObject;
     [SerializeField] protected KitchenObjectSO kitchenObjectSo;
 
     public override void Interact(Player player)
@@ -13,7 +13,7 @@ public class ContainerCounter : BaseCounter
         if (!player.HasKitchenObject())
         {
             KitchenObject.Spawn(kitchenObjectSo, this);
-            OnPlayerGrabedObject?.Invoke(this, EventArgs.Empty);
+            OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
         }
     }
 }
