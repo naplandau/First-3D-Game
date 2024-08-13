@@ -10,10 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Exit if not on master branch
+      # - name: Exit if not on master branch
       #   if: endsWith(github.ref, 'master') == false
-        if: github.ref == 'refs/heads/master'
-        run: exit -1
+        # if: github.ref == 'refs/heads/release'
+        # run: exit -1
       
       - uses: game-ci/unity-builder@v4
         env:
