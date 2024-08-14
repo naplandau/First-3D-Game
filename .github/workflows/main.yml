@@ -1,9 +1,10 @@
 name: CI Build WebGL
 on:
   push:
-    # Pattern matched against refs/tags
-    tags:        
-      - '*' 
+    branches:
+      - release
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
   build:
     runs-on: ubuntu-latest
