@@ -5,13 +5,13 @@ on:
       platform:
         required: true
         type: string
-      secrets:
-        UNITY_EMAIL:
-          required: true
-        UNITY_PASSWORD:
-          required: true
-        UNITY_LICENSE:
-          required: true
+    secrets:
+      UNITY_EMAIL:
+        required: true
+      UNITY_PASSWORD:
+        required: true
+      UNITY_LICENSE:
+        required: true
     outputs:
       buildVersion:
         value: ${{ jobs.buildWithLinux.outputs.buildVersion }} 
