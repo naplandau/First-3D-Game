@@ -68,10 +68,10 @@ jobs:
     uses: ./.github/workflows/buildWithLinux.yml
     with:
       platform: WebGL
-      secrets:
-        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    secrets:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
   
   deployToGitHubPages:
     name: Deploy to GitHub Pages
