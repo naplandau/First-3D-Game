@@ -92,7 +92,7 @@ jobs:
         if: matrix.targetPlatform == 'WebGL'
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: . # The folder the action should deploy.
+          folder: build/${{ matrix.targetPlatform }}/${{ env.PROJECT_NAME }} # The folder the action should deploy.
 
       # More details on usage here: https://github.com/marketplace/actions/create-release
       - name: Create Release
