@@ -37,23 +37,24 @@ jobs:
         with:
           lfs: true
 
-      # Cache
-      - uses: actions/cache@v2
+      - name: Cache Library
+        uses: actions/cache@v4
         with:
           path: Library
-          key: Library-${{ matrix.targetPlatform }}
-
-      # Build
-      - name: Build project
-        uses: game-ci/unity-builder@v2
+          key: Library-build-${{ matrix.targetPlatform }}
+          restore-keys: |
+            Library-build-${{ matrix.targetPlatform }}
+            Library-   
+            
+      - name: Build Unity Project
+        id: build
+        uses: game-ci/unity-builder@v4
         env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          ## Use below variables for Professional Serial
-          # UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          # UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          # UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
         with:
-          targetPlatform:  ${{ matrix.targetPlatform }}
+          targetPlatform: ${{ matrix.targetPlatform }}
           buildName: ${{ env.PROJECT_NAME }}
 
       # We manually compress the MacOS build, as uploading as an Artifact causes issues on MacOS
