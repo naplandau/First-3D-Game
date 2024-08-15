@@ -11,7 +11,7 @@ on:
         required: false
         description: 'Release note'
         default: ''
-      prerelease:
+      pre_release:
         required: false
         default: false
         type: boolean
@@ -99,7 +99,7 @@ jobs:
         id: create_release
         uses: ncipollo/release-action@v1
         with:
-          prerelease: ${{ input.prerelease }}
+          prerelease: ${{ inputs.pre_release }}
           allowUpdates: true
           tag: ${{ inputs.tag }} # Or what ever tag you want, but there must be a tag!
           body: ${{ inputs.note }}
