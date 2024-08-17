@@ -11,6 +11,10 @@ on:
         required: false
         description: 'Release note'
         default: ''
+      pre_release:
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build-project:
@@ -33,9 +37,10 @@ jobs:
     steps:
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           lfs: true
+          fetch-depth: 0
 
       - name: Cache Library
         uses: actions/cache@v4
@@ -76,25 +81,25 @@ jobs:
 
       # Upload Artifacts
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}-${{ matrix.targetPlatform }}
           path: build/${{ env.PROJECT_NAME }}-${{ matrix.targetPlatform }}.zip
 
       #Upload to Pages (For WebGL builds)
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.1
+        uses: JamesIves/github-pages-deploy-action@v4
         if: matrix.targetPlatform == 'WebGL'
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: build/WebGL/${{ env.PROJECT_NAME }} # The folder the action should deploy.
+          folder: build/${{ matrix.targetPlatform }}/${{ env.PROJECT_NAME }} # The folder the action should deploy.
 
       # More details on usage here: https://github.com/marketplace/actions/create-release
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1
         with:
-          prerelease: true
+          prerelease: ${{ inputs.pre_release }}
           allowUpdates: true
           tag: ${{ inputs.tag }} # Or what ever tag you want, but there must be a tag!
           body: ${{ inputs.note }}

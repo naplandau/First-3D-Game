@@ -144,7 +144,9 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
         _isMoving = moveDir != Vector3.zero;
 
-        transform.forward = Vector3.Slerp(transform.forward, moveDir, forwardRotateSpeed * Time.deltaTime);
+        if (_isMoving) {
+            transform.forward = Vector3.Slerp(transform.forward, moveDir, forwardRotateSpeed * Time.deltaTime);
+        }
     }
 
     public Transform GetKitchenObjectFollowTransform()
