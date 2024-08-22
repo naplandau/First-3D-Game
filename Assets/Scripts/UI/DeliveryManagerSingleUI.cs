@@ -22,7 +22,6 @@ public class DeliveryManagerSingleUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        Debug.Log(recipeSo.kitchenObjectSos.Count);
         foreach (KitchenObjectSO kitchenObjectSo in recipeSo.kitchenObjectSos) {
             Transform iconTransform = Instantiate(iconTemplate, iconContainer);
             iconTransform.gameObject.SetActive(true);
