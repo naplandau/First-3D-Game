@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour {
    public event EventHandler OnStateChanged;
    
    public static GameManager Instance { get; private set; }
-   private enum State {
+   public enum State {
       WaitingToStart,
       CountdownToStart,
       GamePlaying,
@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
    }
 
    private State state;
-   private float waitingToStartTimer = 1f;
+   private float waitingToStartTimer = .5f;
    private float countdownToStartTimer = 3f;
    private float gamePlayingToStartTimer = 10f;
    private void Awake() {
@@ -63,7 +63,11 @@ public class GameManager : MonoBehaviour {
       return state == State.CountdownToStart;
    }
 
-   public float GetWaitingToStartTimer() {
-      return waitingToStartTimer;
+   public float GetCountdownToStartTimer() {
+      return countdownToStartTimer;
+   }
+
+   public State GetState() {
+      return state;
    }
 }

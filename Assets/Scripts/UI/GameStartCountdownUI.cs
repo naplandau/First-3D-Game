@@ -13,16 +13,19 @@ public class GameStartCountdownUI : MonoBehaviour
     }
 
     private void GameManager_OnStateChanged(object sender, EventArgs e) {
+        Debug.Log($"state changed {GameManager.Instance.GetState()}");
         if (GameManager.Instance.IsCountdownToStartActive()) {
+            Debug.Log("Starting Countdown");
             Show();
         }
         else {
+            Debug.Log("Starting Game");
             Hide();
         }
     }
 
     private void Update() {
-        countdownText.text = Mathf.Ceil(GameManager.Instance.GetWaitingToStartTimer()).ToString();
+        countdownText.text = Mathf.Ceil(GameManager.Instance.GetCountdownToStartTimer()).ToString();
     }
     
     private void Show() {
