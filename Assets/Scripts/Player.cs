@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Player : MonoBehaviour, IKitchenObjectParent
-{
+public class Player : MonoBehaviour, IKitchenObjectParent {
+    public event EventHandler OnPickSomething;
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public BaseCounter selectedCounter; 
@@ -42,6 +42,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
 
     private void GameInputOnOnInteractAlternativeAction(object sender, EventArgs e) {
+        if (!GameManager.Instance.IsGamePlaying()) return;
         if (_selectedCounter != null)
         {
             _selectedCounter.InteractAlternative(this);
@@ -50,6 +51,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void GameInputOnOnInteractAction(object sender, EventArgs e)
     {
+        if (!GameManager.Instance.IsGamePlaying()) return;
         if (_selectedCounter != null)
         {
             _selectedCounter.Interact(this);
@@ -158,6 +160,9 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     {
 
         this._kitchenObject = kitchenObject;
+        if (kitchenObject != null) {
+            OnPickSomething?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public KitchenObject GetKitchenObject()

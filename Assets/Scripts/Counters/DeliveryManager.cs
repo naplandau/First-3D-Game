@@ -6,6 +6,9 @@ public class DeliveryManager : MonoBehaviour {
 
 	public event EventHandler OnRecipeSpawn;
 	public event EventHandler OnRecipeCompleted;
+	public event EventHandler OnRecipeFailed;
+	public event EventHandler OnRecipeSuccess;
+	
 	public static DeliveryManager Instance { get; private set; }
 	
 	[SerializeField] private RecipeListSO recipeListSO;
@@ -21,6 +24,8 @@ public class DeliveryManager : MonoBehaviour {
 	}
 
 	private void Update() {
+		if (!GameManager.Instance.IsGamePlaying()) return;
+		
 		spawnRecipeTimer -= Time.deltaTime;
 		if (spawnRecipeTimer <= 0f) {
 			spawnRecipeTimer = spawnRecipeTimerMax;
@@ -58,10 +63,12 @@ public class DeliveryManager : MonoBehaviour {
 				if (plateIngredientMatchs) {
 					waitingRecipeSOList.RemoveAt(i);
 					OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
+					OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
 					return;
 				}
 			}
 		}
+		OnRecipeFailed?.Invoke(this, EventArgs.Empty);
 	}
 
 	public List<RecipeSO> GetWaitingRecipeList() {
